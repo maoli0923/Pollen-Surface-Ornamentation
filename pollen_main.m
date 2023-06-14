@@ -1,4 +1,5 @@
-%This is code for "Grass pollen surface ornamentation is highly diverse across the phylogeny: evidence from northern South America and the global literature" 
+%This is code for "Grass pollen surface ornamentation is diverse across 
+%the phylogeny: evidence from northern South America and the global literature" 
 list=dir('*_3.3');
 s=1;
 fid=fopen('name.txt','wt');
@@ -67,3 +68,49 @@ for j=1:size(I,3)
     Feature_adj(j,1)=mean(tmp_size);
     Feature_adj(j,2)=mean(tmp_density);
 end
+
+
+%This is code for the SC features developed for "Micro-ornamentation of the Poaceae pollen wall as a tool for identifying grasses in the fossil record" 
+s=1;
+for j=1:size(I_adj,3)
+    for i=1:5
+        h=I_adj(cropindex(s,1):cropindex(s,1)+999,cropindex(s,2):cropindex(s,2)+999,j);
+        h=imresize(h,0.2);
+        h=h(41:160,41:160);
+        h_rgb = cat(3,h,h,h);
+        [X_no_dither,map] = rgb2ind(h_rgb,4,'nodither');
+        [m1 m2]=sort(map(:,1),'descend');
+        a=find(X_no_dither==m2(1)-1|X_no_dither==m2(2)-1);
+        BW=zeros(size(h));
+        BW(a) = 1;      
+        hh=bwareaopen(BW,5);
+        hh=bwareaopen(~hh,5);
+        hh=~hh;
+        g(i,:)=pollen_newSC(hh);
+        s=s+1;
+    end
+    SC2(j,1:20)=mean(g);
+end 
+save SC2.mat SC2
+
+s=1;
+for j=1:size(I_adj,3)
+    for i=1:5
+        h=I_adj(cropindex(s,1):cropindex(s,1)+999,cropindex(s,2):cropindex(s,2)+999,j);
+        h=imresize(h,0.2);
+        h=h(41:160,41:160);
+        h_rgb = cat(3,h,h,h);
+        [X_no_dither,map] = rgb2ind(h_rgb,4,'nodither');
+        [m1 m2]=sort(map(:,1),'descend');
+        a=find(X_no_dither==m2(1)-1|X_no_dither==m2(2)-1|X_no_dither==m2(3)-1);
+        BW=zeros(size(h));
+        BW(a) = 1;      
+        hh=bwareaopen(BW,5);
+        hh=bwareaopen(~hh,5);
+        hh=~hh;
+        g(i,:)=pollen_newSC(hh);
+        s=s+1;
+    end
+    SC3(j,1:20)=mean(g);
+end 
+save SC3.mat SC3
